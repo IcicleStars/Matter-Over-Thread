@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+.DS_Store
+
+# arduino-cli build output
+build/
+
+# fake data: never commit, never mix into data/raw
+training/data/synthetic/
