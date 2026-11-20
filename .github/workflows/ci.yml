@@ -1,0 +1,29 @@
+name: ci
+
+on: [push, pull_request]
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-ci.txt
+      - run: pip install -r requirements-ci.txt
+      - run: ruff check .
+      - run: pytest -q
+
+  firmware:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: arduino/setup-arduino-cli@v2
+      - run: bash tools/setup_arduino_cli.sh
+      - run: arduino-cli compile firmware/mg24_motion_node --build-path build/log
+      - run: >
+          arduino-cli compile firmware/mg24_motion_node --build-path build/infer
+          --build-property compiler.cpp.extra_flags=-DMODE=1
+      - run: arduino-cli compile firmware/i2c_scan --fqbn SiliconLabs:silabs:xiao_mg24
